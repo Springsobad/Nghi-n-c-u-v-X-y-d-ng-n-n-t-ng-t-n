@@ -31,6 +31,6 @@ export type RestaurantSearchResponse = {
     pagination: {
         total: number;
         page: number;
-        pages: number
+        pages: number;
     }
 }
