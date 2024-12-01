@@ -127,7 +127,7 @@ const createCheckoutSession = async (req: Request, res: Response) => {
         }
 
         const menuItems = restaurant.menuItems;
-        if (!Array.isArray(menuItems) || menuItems.length === 0 || menuItems.length === 0) {
+        if (!Array.isArray(menuItems) || menuItems.length === 0) {
             console.error("Menu items invalid or empty:", menuItems);
             throw new Error("Menu items are invalid or not found");
         }
@@ -161,10 +161,10 @@ const createCheckoutSession = async (req: Request, res: Response) => {
 const createLineItems = (checkoutSessionRequest: CheckoutSessionRequest, menuItems: MenuItemType[]) => {
     const lineItems = checkoutSessionRequest.cartItems.map((cartItem) => {
         const menuItem = menuItems.find((item) => item._id.toString() === cartItem.menuItemId.toString());
-        if (!menuItem) {
-            console.error(`Menu item not found: ${cartItem.menuItemId}`);
-            throw new Error(`Menu item not found: ${cartItem.menuItemId}`);
-        }
+            if (!menuItem) {
+                console.error(`Menu item not found: ${cartItem.menuItemId}`);
+                throw new Error(`Menu item not found: ${cartItem.menuItemId}`);
+            }
         return {
             price_data: {
                 currency: "gbp",
