@@ -95,6 +95,7 @@ import Stripe from "stripe";
 import { Request, Response } from "express";
 import Restaurant, { MenuItemType } from "../model/restaurant";
 import dotenv from "dotenv";
+import Order from "../model/order";
 
 dotenv.config();
 
@@ -125,7 +126,14 @@ const createCheckoutSession = async (req: Request, res: Response) => {
             console.error("Restaurant not found for ID:", checkoutSessionRequest.restaurantId);
             throw new Error("Restaurant not found");
         }
-
+        const newOrder = new Order({
+            restaurant: restaurant,
+            user: req.userId,
+            status:"placed",
+            deliveryDetails: checkoutSessionRequest.deliveryDetails,
+            cartItems: checkoutSessionRequest.cartItems,
+            createdAt: new Date(),
+        })
         const menuItems = restaurant.menuItems;
         if (!Array.isArray(menuItems) || menuItems.length === 0) {
             console.error("Menu items invalid or empty:", menuItems);
@@ -136,13 +144,13 @@ const createCheckoutSession = async (req: Request, res: Response) => {
         console.log("Menu items from database:", menuItems);
 
         const lineItems = createLineItems(checkoutSessionRequest, menuItems);
-        const session = await createSession(lineItems, "TEST_ORDER_ID", restaurant.deliveryPrice, restaurant._id.toString());
+        const session = await createSession(lineItems, newOrder._id.toString(), restaurant.deliveryPrice, restaurant._id.toString());
 
         if (!session.url) {
             res.status(500).json({ msg: "Error creating stripe session" });
             return;
         }
-
+        await newOrder.save();
         res.json({ url: session.url });
     } catch (error: unknown) {
       
