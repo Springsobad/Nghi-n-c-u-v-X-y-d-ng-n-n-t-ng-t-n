@@ -17,14 +17,26 @@ const cors_1 = __importDefault(require("cors"));
 require("dotenv/config");
 const mongoose_1 = __importDefault(require("mongoose"));
 const MyUserRoute_1 = __importDefault(require("./routes/MyUserRoute"));
+const cloudinary_1 = require("cloudinary");
+const MyRestaurantRoute_1 = __importDefault(require("./routes/MyRestaurantRoute"));
+const RestaurantRoute_1 = __importDefault(require("./routes/RestaurantRoute"));
+const OrderRoute_1 = __importDefault(require("./routes/OrderRoute"));
 mongoose_1.default.connect(process.env.MONGODB_CONNECTION_STRING).then(() => console.log("Ket noi voi Database"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
+cloudinary_1.v2.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 app.get("/health", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("Health OK!");
 }));
 app.use("/api/my/user", MyUserRoute_1.default);
+app.use("/api/my/restaurant", MyRestaurantRoute_1.default);
+app.use("/api/restaurant", RestaurantRoute_1.default);
+app.use("/api/order", OrderRoute_1.default);
 app.listen(7000, () => {
     console.log("Sever at 7000");
 });

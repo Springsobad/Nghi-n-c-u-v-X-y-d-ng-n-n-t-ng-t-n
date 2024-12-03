@@ -9,9 +9,9 @@ import restaurantRoute from "./routes/RestaurantRoute";
 import orderRoute from "./routes/OrderRoute"
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string).then(()=>console.log("Ket noi voi Database"));
  const app = express();
- app.use(express.json());
  app.use(cors());
-
+app.use("/api/order/checkout/webhook", express.raw({type: "*/*"}));
+app.use(express.json());
 cloudinary.config({
    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
    api_key: process.env.CLOUDINARY_API_KEY,
